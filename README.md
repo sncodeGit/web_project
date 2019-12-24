@@ -5,6 +5,6 @@
 
 Рарзработан с использованием сервиса AWS.
 
-Frontend разработан на чистом JS + HTML + CSS. Backend - Python на AWS Lambda. База данных - MySQL на AWS RDS. 
+Frontend разработан на чистом JS + HTML + CSS. Backend - Python на AWS Lambda. Cвязь Backend и Frontend через API Gateway. База данных - MySQL на AWS RDS. 
 
 # Здесь описание серверной архитектуры приложения
