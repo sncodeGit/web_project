@@ -5,6 +5,12 @@ body {
          height: 100vh;
  }
  
+a {
+         text-decoration: none;
+         border-bottom: 3px solid #0071f0;
+         color: black;
+}
+ 
 .form {
          width: 300px;
          padding: 32px;
