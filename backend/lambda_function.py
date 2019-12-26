@@ -5,6 +5,7 @@ import pymysql
 import support_db_func as dbfunc
 import config
 import css
+import paramiko
 
 logger = logging.getLogger() 
 logger.setLevel(logging.INFO)
@@ -40,7 +41,9 @@ def main(event):
 def registry(data):
     conn = dbfunc.db_connect()
     
-    query = "insert into web_user values ('"+ str(data['login']) + "', '" + str(data['first_password']) + "', '" + str(data['email']) + "');"
+    query = f'''
+    insert into web_user (login, password, email) values ('%s', '%s', '%s');
+    ''' %  (str(data['login']), str(data['first_password']), str(data['email']))
     with conn.cursor() as cur:
         cur.execute(query)
         conn.commit()
