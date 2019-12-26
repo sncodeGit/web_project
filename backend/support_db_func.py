@@ -21,10 +21,37 @@ def create_users_table():
     
     with conn.cursor() as cur:
         cur.execute(f'''create table web_user (
-            login varchar(30),
-            password varchar(30),
+            id int not null auto_increment,
+            login varchar(30) not null unique,
+            password varchar(30) not null,
             email varchar(30) not null,
-            primary key (email));''')
+            primary key (id));''')
+        conn.commit()
+        
+    return
+
+def create_ssh_table():
+    conn = db_connect()
+    
+    with conn.cursor() as cur:
+        cur.execute(f'''create table ssh_servers (
+            serv_id int not null auto_increment,
+            user_id int not null,
+            ssh_host varchar(30) not null,
+            ssh_password varchar(30) not null,
+            ssh_login varchar(30) not null,
+            ssh_port smallint unsigned not null,
+            primary key (serv_id),
+            foreign key (user_id) references web_user (id));''')
+        conn.commit()
+        
+    return
+
+def drop_table(name):
+    conn = db_connect()
+    
+    with conn.cursor() as cur:
+        cur.execute('DROP TABLE ' + name + ';')
         conn.commit()
         
     return
