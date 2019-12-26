@@ -6,7 +6,7 @@
         <title>Регистрация</title>
     </head>
 <body>
-    <form class="form" method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
+    <form class="form" method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj" onsubmit="return checkRegistryData();">
         
         <h1 class="form_title">Регистрация</h1>
         
@@ -27,7 +27,7 @@
             <input class="form_input" type="password" name="second_password">
         </div>
         
-        <button class="form_button" onclick="checkRegistryData();">Зарегистрироваться</button>
+        <button class="form_button">Зарегистрироваться</button>
     </form>
     
 </body>
