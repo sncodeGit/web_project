@@ -3,7 +3,11 @@ function checkAuthData() {
     data[0] = document.getElementsByName("login")[0].value;
     data[1] = document.getElementsByName("password")[0].value;
     
+    var valid = true;
     if (data[0] == "" || data[1] == ""){
         alert("Одно из полей пустое. Попробуйте снова.");
+        valid = false;
     }
+    
+    return valid;
 }
