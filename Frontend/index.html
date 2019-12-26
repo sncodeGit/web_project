@@ -11,7 +11,7 @@
         <title>Вход</title>
     </head>
 <body>
-    <form class="form" method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
+    <form class="form" method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj" onsubmit="return checkAuthData();">
         
         <h1 class="form_title">Вход</h1>
         
@@ -24,8 +24,8 @@
             <input class="form_input" type="password" name="password">
         </div>
         
-        <button class="form_button" onclick="checkAuthData();">Войти</button>
-        <button class="form_button" onclick="openRegistry();">Регистрация</button>
+        <button class="form_button">Войти</button>
+        <button class="form_button" onclick="gotoRegistry();" type="button">Регистрация</button>
         <div class="g-signin2" data-onsuccess="onSignIn();" data-theme="dark"></div>
         <p id="content"></p>
     </form>
