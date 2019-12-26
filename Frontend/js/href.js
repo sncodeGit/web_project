@@ -1,3 +1,3 @@
-function openRegistry() {
-    open("./registry.html");
+function gotoRegistry() {
+    document.location.href = "./registry.html";
 }
