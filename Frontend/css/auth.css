@@ -1,35 +1,23 @@
-body {
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         height: 100vh;
- }
- 
-a {
-         text-decoration: none;
-         border-bottom: 3px solid #0071f0;
-         color: black;
-}
- 
-.form {
-         width: 300px;
-         padding: 32px;
-         border-radius: 10px;
-         box-shadow: 0 4px 16px #ccc;
-         font-family: sans-serif;
-         letter-spacing: 1px;
- }
- 
-.form_title { 
-         text-align: center; 
-         font-weight: normal;
- }
- 
 .form_button {
          padding: 10px 20px;
          font-family: sans-serif;
          letter-spacing: 1px;
          font-size: 16px;
+         color :#fff ;
+         background-color: #0071f0;
+         cursor: pointer;
+ }
+
+.center { 
+         text-align: center; 
+         font-weight: normal;
+ }
+ 
+.form_button2 {
+         padding: 8px 13px;
+         font-family: sans-serif;
+         letter-spacing: 1px;
+         font-size: 12px;
          color :#fff ;
          background-color: #0071f0;
          cursor: pointer;
@@ -66,3 +54,8 @@ a {
 .form_input:focus {
          border-bottom: 1px solid #1a73a8;
  }
+ 
+</style>
+'''
+
+# auth.css END
