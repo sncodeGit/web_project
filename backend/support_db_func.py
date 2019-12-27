@@ -25,7 +25,7 @@ def create_users_table():
             login varchar(30) not null unique,
             password varchar(30) not null,
             email varchar(30) not null,
-            primary key (id));''')
+            primary key (id));''') 
         conn.commit()
         
     return
@@ -66,3 +66,19 @@ def log_db_table(table_name):
         
     for row in cur:
         logger.info(row)
+        
+def get_user_id(login):
+    conn = db_connect()
+        
+    query = f'''
+    select id from web_user where login='%s';
+    ''' % login
+    
+    with conn.cursor() as cur:
+        cur.execute(query)
+        conn.commit()
+        
+    for row in cur:
+        user_id = row[0]
+    
+    return user_id
