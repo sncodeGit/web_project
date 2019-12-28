@@ -40,6 +40,21 @@ a {
          cursor: pointer;
  }
 
+.center { 
+         text-align: center; 
+         font-weight: normal;
+ }
+ 
+.form_button2 {
+         padding: 8px 13px;
+         font-family: sans-serif;
+         letter-spacing: 1px;
+         font-size: 12px;
+         color :#fff ;
+         background-color: #0071f0;
+         cursor: pointer;
+ }
+
 .form_grup {
          position: relative;
          margin-bottom: 20px;
