@@ -1,7 +1,7 @@
 import json
 import sys
 import logging
-import pymysql
+import pymysq
 import support_db_func as dbfunc
 import config
 import css
@@ -30,9 +30,22 @@ def lambda_handler(event, context):
     
 def main(event):
     data = event['queryStringParameters']
+    #data = {}
+    #data['ssh_host'] = '31.41.155.130'
+    #data['ssh_login'] = 'root'
+    #data['ssh_password'] = 'YPYMkrk7w2JK'
+    #data['ssh_port'] = '22'
+    #data['login'] = 'denis'
+    #data['file_path'] = '/var/log/syslog'
+    #data['page_num'] = '1'
     
-    if (len(data) == 5):
-        add_serv_base(data)
+    if (len(data) == 7):
+        logs_disp(data)
+    elif (len(data) == 5):
+        if 'login' in data.keys():
+            vis_serv_get_path(data)
+        elif 'user_id' in data.keys():
+            add_serv_base(data)
     elif (len(data) == 4):
         registry(data)
     elif (len(data) == 2):
@@ -86,7 +99,7 @@ def auth(data):
             <form method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
                 <input type="hidden" name="mode" value="add_serv">
                 <input type="hidden" name="login" value="%s">
-                <button class="form_button">Загрузить новый сервер</button>
+                <button class="form_button">Добавить новый сервер</button>
             </form>
             <form method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
                 <input type="hidden" name="mode" value="vis_serv">
@@ -106,22 +119,36 @@ def auth(data):
     return
 
 def html_formatting():
-    ret['body'] = f'''
-        <html>
-        <head>
-        <meta charset="UTF-8">
-        %s
-        <title>%s</title>
-        </head>
-        <body>
-            <div class="form">
-                %s
-            </div>
-        </body>
-        </html>
-        ''' % (css.auth_css, html_param['title'], html_param['text'])
+    if (html_param['title'] != 'Логи'):
+        ret['body'] = f'''
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            %s
+            <title>%s</title>
+            </head>
+            <body>
+                <div class="form">
+                    %s
+                </div>
+            </body>
+            </html>
+            ''' % (css.auth_css, html_param['title'], html_param['text'])
+    else:
+        ret['body'] = f'''
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>%s</title>
+            </head>
+            <body>
+                    %s
+            </body>
+            </html>
+            ''' % (html_param['title'], html_param['text'])
         
 def add_serv_page(login):
+    ret['statusCode'] = 200
     html_param['title'] = "Добавление сервера"
     html_param['text'] = f'''
         Параметры SSH:<br><br><br>
@@ -181,23 +208,28 @@ def vis_serv(login):
     user_id = dbfunc.get_user_id(login)
     
     query = f'''
-    select ssh_host, ssh_login from ssh_servers where user_id='%s';
+    select ssh_host, ssh_login, ssh_password, ssh_port from ssh_servers where user_id='%s';
     ''' % user_id
     
     with conn.cursor() as cur:
         cur.execute(query)
         conn.commit()
         
-    button = f'''
-    <form method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
-                <button class="form_button2">Перейти</button>
-            </form>
-        '''
-        
     for row in cur:
-        servers = servers + row[0] + ' : ' + row[1]
+        button = f'''
+                <form method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
+                    <input type="hidden" name="login" value="%s">
+                    <input type="hidden" name="ssh_host" value="%s">
+                    <input type="hidden" name="ssh_login" value="%s">
+                    <input type="hidden" name="ssh_password" value="%s">
+                    <input type="hidden" name="ssh_port" value="%s">
+                    <button class="form_button2">Перейти</button>
+                </form>
+            ''' % (login, row[0], row[1], row[2], str(row[3]))
+        servers = servers + row[1] + '@' + row[0] + ':' + str(row[3])
         servers = servers + button
     
+    ret['statusCode'] = 200
     html_param['title'] = "Список серверов"
     html_param['text'] = f'''
         <div class="center">
@@ -205,6 +237,46 @@ def vis_serv(login):
             %s
         </div>
         ''' % (login, servers)
+
+def vis_serv_get_path(data):
+    ret['statusCode'] = 200
+    html_param['title'] = "Введите путь к файлу"
+    html_param['text'] = f'''
+            <form method="get" action="https://sd1i2zzpx2.execute-api.us-east-1.amazonaws.com/default/webproj">
+            
+                Введите путь до файла логов<br>
+                
+                <div class="form_grup">
+                    <input class="form_input" type="text" name="file_path">
+                </div>
+        
+                <input type="hidden" name="page_num" value="1">
+                <input type="hidden" name="login" value="%s">
+                <input type="hidden" name="ssh_host" value="%s">
+                <input type="hidden" name="ssh_login" value="%s">
+                <input type="hidden" name="ssh_password" value="%s">
+                <input type="hidden" name="ssh_port" value="%s">
+                <button class="form_button">Ввести</button>
+            </form>
+    ''' % (data['login'], data['ssh_host'], data['ssh_login'], data['ssh_password'], str(data['ssh_port']))
+    return
+
+def logs_disp(data):
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(hostname=data['ssh_host'], username=data['ssh_login'], password=data['ssh_password'], port=int(data['ssh_port']))
+    first_str = 1 + 10 * (int(data['page_num']) - 1)
+    last_str = first_str + 9
+    stdin, stdout, stderr = client.exec_command('sed -n ' + str(first_str) + ',' + str(last_str) + 'p ' + data['file_path'])
+    logs = stdout.read()
+    logs = str(logs)
+    
+    ret['statusCode'] = 200
+    html_param['title'] = "Логи"
+    html_param['text'] = f'''
+            %s
+        ''' % logs
+    return
         
 def back_to_main(login):
     ret['statusCode'] = 200
